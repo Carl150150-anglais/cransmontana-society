@@ -100,7 +100,8 @@ async function api(pathAndQuery) {
 }
 const canSpend = (n) => requests + n <= MAX_REQUESTS && remainingQuota >= n + 1;
 
-const seen = await readJson(SEEN_FILE, { photos: {}, queryCursor: {}, queryPage: {} });
+const seen = await readJson(SEEN_FILE, {});
+for (const field of ['photos', 'queryCursor', 'queryPage', 'queryLeft', 'queryDone']) seen[field] ??= {};
 await mkdir(PHOTOS_UNSPLASH, { recursive: true });
 const files = await readdir(PHOTOS_UNSPLASH);
 const onDisk = (theme) => files.filter((f) => f.startsWith(`${theme}_`) && f.endsWith('.jpg')).length;
@@ -109,6 +110,7 @@ const got = Object.fromEntries(THEMES.map((t) => [t, 0]));
 
 // Search results are pooled by query, so one search can serve mountain, ambition and discipline.
 const pools = new Map();
+const poolKeys = new Map(); // query -> variant key ("query" or "query|black") the pool came from
 const takenThisRun = new Set();
 const searchedThisRun = Object.fromEntries(THEMES.map((t) => [t, 0]));
 
@@ -123,10 +125,14 @@ function takeFromPools(theme) {
   return null;
 }
 
-// One page of results for a query, in black only or in any colour. Pages are tracked per variant.
+// One page of results for a query, in black only or in any colour. Pages are tracked per variant:
+// a page that still had unused photos at the end of a run is asked for again, and a variant whose
+// last page is used up is skipped without a request (returns null).
 async function searchPage(query, black) {
   const key = black ? `${query}|black` : query;
-  const page = (seen.queryPage[key] ?? 0) + 1;
+  const again = Boolean(seen.queryLeft[key]);
+  if (seen.queryDone[key] && !again) return null;
+  const page = again ? seen.queryPage[key] : (seen.queryPage[key] ?? 0) + 1;
   const params = new URLSearchParams({
     query, page, per_page: 10, orientation: 'portrait', content_filter: 'high',
     ...(black ? { color: 'black' } : {}),
@@ -134,6 +140,9 @@ async function searchPage(query, black) {
   const data = await api(`/search/photos?${params}`);
   // Rotation state only advances once a search has succeeded.
   seen.queryPage[key] = page;
+  delete seen.queryLeft[key];
+  if (page >= data.total_pages) seen.queryDone[key] = true;
+  poolKeys.set(query, key);
   const usable = data.results
     .filter((p) => p.height >= MIN_HEIGHT && acceptable(p))
     .sort((a, b) => poseRank(a) - poseRank(b)); // stable: keeps Unsplash relevance order within each rank
@@ -145,11 +154,12 @@ async function search(theme) {
   const cursor = seen.queryCursor[theme] ?? 0;
   const query = QUERIES[theme][cursor % QUERIES[theme].length];
   if (pools.has(query)) { seen.queryCursor[theme] = cursor + 1; return; } // already searched this run
-  let usable = await searchPage(query, DARK.has(query));
-  // A black-only search can come back empty; try the same query in any colour.
-  if (!usable.length && DARK.has(query) && canSpend(2)) usable = await searchPage(query, false);
+  let usable = DARK.has(query) ? await searchPage(query, true) : null;
+  // A black-only search can come back empty or be used up; try the same query in any colour.
+  // When the black search made no request, the caller's budget check already covers this one.
+  if (!usable?.length && (usable === null || canSpend(2))) usable = await searchPage(query, false);
   seen.queryCursor[theme] = cursor + 1;
-  pools.set(query, usable);
+  pools.set(query, usable ?? []);
 }
 
 async function download(theme, photo, query) {
@@ -220,6 +230,8 @@ try {
     : err.status === 403 || err.status === 429 ? 'Unsplash rate limit reached'
     : err.message;
 } finally {
+  // Pages that still hold unused photos are asked for again next run instead of skipping to the next page.
+  for (const [query, pool] of pools) if (pool.some((p) => !seen.photos[p.id])) seen.queryLeft[poolKeys.get(query)] = true;
   await writeJson(SEEN_FILE, seen);
 }
 

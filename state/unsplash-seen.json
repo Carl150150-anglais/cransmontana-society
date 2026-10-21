@@ -191,9 +191,37 @@
       "photographer": "Paul Pastourmatzis",
       "username": "paulpastourmatzis",
       "downloaded_at": "2026-10-21T16:09:14.551Z"
+    },
+    "LWPPpkn6NEQ": {
+      "theme": "discipline",
+      "photographer": "Yash Parashar",
+      "username": "yash_parashar",
+      "downloaded_at": "2026-10-21T16:26:49.163Z"
+    },
+    "82yZTFGQcK8": {
+      "theme": "cars",
+      "photographer": "redcharlie",
+      "username": "redcharlie",
+      "downloaded_at": "2026-10-21T16:26:52.465Z"
+    },
+    "p2WUEFGrAdA": {
+      "theme": "watches",
+      "photographer": "Ryan Waring",
+      "username": "ryanwaring",
+      "downloaded_at": "2026-10-21T16:26:54.674Z"
+    },
+    "l_g-9Yd8RNA": {
+      "theme": "golf",
+      "photographer": "Samuel James",
+      "username": "samueljames16",
+      "downloaded_at": "2026-10-21T16:26:59.235Z"
     }
   },
-  "queryCursor": {},
+  "queryCursor": {
+    "discipline": 1,
+    "cars": 1,
+    "golf": 1
+  },
   "queryPage": {
     "swiss alps winter sunrise": 1,
     "sports car alps": 1,
@@ -202,7 +230,24 @@
     "skier powder alps": 1,
     "luxury watch macro dark|black": 1,
     "ski slope alps sunrise|black": 1,
-    "golf course mountains morning|black": 1,
-    "luxury car mountain road night|black": 1
+    "golf course mountains morning|black": 2,
+    "luxury car mountain road night|black": 1,
+    "rolex watch macro": 1,
+    "porsche 911 snow|black": 1,
+    "golf course mountains morning": 1
+  },
+  "queryLeft": {
+    "golf course mountains morning": true,
+    "rolex watch macro": true,
+    "porsche 911 snow|black": true,
+    "skier powder alps": true,
+    "swiss chalet snow night": true,
+    "sports car alps": true,
+    "fine dining table dark": true
+  },
+  "queryDone": {
+    "luxury car mountain road night|black": true,
+    "golf course mountains morning|black": true,
+    "ski slope alps sunrise|black": true
   }
 }
