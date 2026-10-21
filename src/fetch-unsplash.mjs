@@ -40,7 +40,7 @@ const BASE_QUERIES = {
   ],
   watches: ['rolex watch macro', 'hublot watch', 'luxury watch diamonds dark', 'luxury watch macro dark', 'swiss watch wrist'],
   ski: ['ski slope alps sunrise', 'skier powder alps'],
-  golf: ['golf course mountains morning'],
+  golf: ['golf course mountains morning', 'crans-montana golf', 'golf course alps'],
   dining: ['champagne chalet fireplace', 'fine dining table dark', 'gourmet plate dark'],
   jewels: ['diamond ring macro dark', 'diamond necklace'],
   fashion: [
@@ -57,8 +57,9 @@ const QUERIES = {
 const DARK = new Set(Object.values(BASE_QUERIES).flat().filter((_, i) => i % 2 === 0));
 
 // Photo descriptions that would clash with the page rules (parties, nightlife, loss) or keep showing up
-// off-topic (smartwatches, cable cars under "car"). Champagne and fireplaces are wanted for chalets and dining.
-const AVOID = /\b(smart ?watch(es)?|apple watch|cable car|firework|fireworks|sparklers?|campfire|bonfire|burning (house|building|car)|smoking|cigarettes?|cocktails?|beer|whisk(e)?y|vodka|bar|pub|nightclub|nightlife|party|parties|celebration|new year|dj|concert|accident|crash|funeral|memorial|grave|cemetery)\b/i;
+// off-topic (smartwatches, cable cars under "car", book covers, seaside, rainbows, crowns).
+// Champagne and fireplaces are wanted for chalets and dining.
+const AVOID = /\b(smart ?watch(es)?|apple watch|cable car|book|sea|ocean|beach|palm trees?|tropical|rainbow|crown|firework|fireworks|sparklers?|campfire|bonfire|burning (house|building|car)|smoking|cigarettes?|cocktails?|beer|whisk(e)?y|vodka|bar|pub|nightclub|nightlife|party|parties|celebration|new year|dj|concert|accident|crash|funeral|memorial|grave|cemetery)\b/i;
 // Photos of people: seen from the back, in profile or in silhouette come first; suggestive poses are never kept.
 const PERSON = /\b(woman|women|man|men|girl|boy|person|people|lady|model|couple|skier|snowboarder)\b/i;
 const DISCREET_POSE = /\b(back|behind|silhouette|silhouetted|profile|rear|walking away|looking away|facing away|side view|from afar|in the distance)\b/i;

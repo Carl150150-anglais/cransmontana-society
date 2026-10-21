@@ -57,7 +57,7 @@
     },
     "s1NoABweLEQ": {
       "theme": "mountain",
-      "photographer": "Dario Br\u00f6nnimann",
+      "photographer": "Dario Brönnimann",
       "username": "dariobroe",
       "downloaded_at": "2026-10-21T16:08:25.975Z"
     },
@@ -94,7 +94,7 @@
     },
     "orI7hd1tNY0": {
       "theme": "dining",
-      "photographer": "M\u00e9lyna C\u00f4t\u00e9",
+      "photographer": "Mélyna Côté",
       "username": "laptiteminimaliste",
       "downloaded_at": "2026-10-21T16:08:39.184Z"
     },
@@ -214,13 +214,164 @@
       "theme": "golf",
       "photographer": "Samuel James",
       "username": "samueljames16",
-      "downloaded_at": "2026-10-21T16:26:59.235Z"
+      "downloaded_at": "2026-10-21T16:26:59.235Z",
+      "rejected": "seaside course, not alpine"
+    },
+    "ANY0Pyj5X8Y": {
+      "theme": "cars",
+      "photographer": "Jesse G-C",
+      "username": "jessegc_",
+      "downloaded_at": "2026-10-21T17:12:03.482Z"
+    },
+    "x7_oyDE5Hro": {
+      "theme": "watches",
+      "photographer": "Yash Parashar",
+      "username": "yash_parashar",
+      "downloaded_at": "2026-10-21T17:12:06.796Z"
+    },
+    "gm4WKV6WeJY": {
+      "theme": "golf",
+      "photographer": "mark tulin",
+      "username": "mftulin",
+      "downloaded_at": "2026-10-21T17:12:10.099Z",
+      "rejected": "rainbow, off-tone"
+    },
+    "HlS7s3RXGMU": {
+      "theme": "dining",
+      "photographer": "Fredrik Öhlander",
+      "username": "fredrikohlander",
+      "downloaded_at": "2026-10-21T17:12:13.395Z",
+      "rejected": "shop sign with large text, not dining"
+    },
+    "u1Hv_erOQH0": {
+      "theme": "jewels",
+      "photographer": "Sabrianna",
+      "username": "sabrinnaringquist",
+      "downloaded_at": "2026-10-21T17:12:18.893Z",
+      "rejected": "white product shot, not moody"
+    },
+    "Jhx_8bbLPhI": {
+      "theme": "fashion",
+      "photographer": "Zoshua Colah",
+      "username": "zoshuacolah",
+      "downloaded_at": "2026-10-21T17:12:23.297Z",
+      "rejected": "bright city street, off-tone"
+    },
+    "_O3yIinfwAk": {
+      "theme": "golf",
+      "photographer": "You Le",
+      "username": "le_y0u",
+      "downloaded_at": "2026-10-21T17:12:25.498Z"
+    },
+    "Sx4Ie3eTPMM": {
+      "theme": "dining",
+      "photographer": "Jonathan Borba",
+      "username": "jonathanborba",
+      "downloaded_at": "2026-10-21T17:12:27.709Z"
+    },
+    "_Ycmc96ZxWM": {
+      "theme": "jewels",
+      "photographer": "Hosniye sadeghi",
+      "username": "hosniyesadeghi",
+      "downloaded_at": "2026-10-21T17:12:29.903Z",
+      "rejected": "crown pendant, off-tone"
+    },
+    "ziPtVHVdAas": {
+      "theme": "fashion",
+      "photographer": "Matthew Moloney",
+      "username": "mattmoloney",
+      "downloaded_at": "2026-10-21T17:12:32.136Z",
+      "rejected": "book cover, large text under the quote"
+    },
+    "6nrVm4uyjRo": {
+      "theme": "golf",
+      "photographer": "Santiago Perez",
+      "username": "santiperez_",
+      "downloaded_at": "2026-10-21T17:12:34.378Z"
+    },
+    "RIqNLZ_h2X8": {
+      "theme": "jewels",
+      "photographer": "parisa safaei",
+      "username": "parisafaei",
+      "downloaded_at": "2026-10-21T17:12:36.510Z"
+    },
+    "8_ukx72W_jI": {
+      "theme": "fashion",
+      "photographer": "Branislav Rodman",
+      "username": "branislavrodman",
+      "downloaded_at": "2026-10-21T17:12:39.821Z",
+      "rejected": "book cover, large text under the quote"
+    },
+    "MFmHV695pd4": {
+      "theme": "jewels",
+      "photographer": "Nataliia Hordiiuk",
+      "username": "whynotnatali",
+      "downloaded_at": "2026-10-21T17:12:42.264Z"
+    },
+    "oco2KcKei_U": {
+      "theme": "fashion",
+      "photographer": "Nikolai Lehmann",
+      "username": "nl_lehmann",
+      "downloaded_at": "2026-10-21T17:12:44.463Z"
+    },
+    "Bx1Hgp7IJ8E": {
+      "theme": "golf",
+      "photographer": "Angelo Jesus",
+      "username": "ajesus93",
+      "downloaded_at": "2026-10-21T17:14:16.849Z",
+      "rejected": "airplane over a forest, no golf"
+    },
+    "zTYoZAs2ENU": {
+      "theme": "dining",
+      "photographer": "Filipp Romanovski",
+      "username": "filipp_roman_photography",
+      "downloaded_at": "2026-10-21T17:14:20.161Z"
+    },
+    "FxxeBquV8CQ": {
+      "theme": "jewels",
+      "photographer": "PRAHANT STUDIO",
+      "username": "prahantstudio",
+      "downloaded_at": "2026-10-21T17:14:23.494Z"
+    },
+    "Iyx3io7TxvE": {
+      "theme": "fashion",
+      "photographer": "Samanta Sokolova",
+      "username": "singollare",
+      "downloaded_at": "2026-10-21T17:14:28.962Z"
+    },
+    "2ElN__GBY68": {
+      "theme": "golf",
+      "photographer": "Tsuyoshi Kozu",
+      "username": "tsuyoshikozu",
+      "downloaded_at": "2026-10-21T17:14:32.286Z"
+    },
+    "m49PTtW1m-Y": {
+      "theme": "jewels",
+      "photographer": "MAJDAH MAJED",
+      "username": "majdah_majed",
+      "downloaded_at": "2026-10-21T17:14:34.469Z"
+    },
+    "B4YcyJqKjuU": {
+      "theme": "fashion",
+      "photographer": "Samanta Sokolova",
+      "username": "singollare",
+      "downloaded_at": "2026-10-21T17:14:36.666Z"
+    },
+    "FZCubrqYZ-0": {
+      "theme": "fashion",
+      "photographer": "Vladimir Yelizarov",
+      "username": "yelizarov",
+      "downloaded_at": "2026-10-21T17:14:38.867Z"
     }
   },
   "queryCursor": {
     "discipline": 1,
-    "cars": 1,
-    "golf": 1
+    "cars": 2,
+    "golf": 4,
+    "watches": 1,
+    "dining": 2,
+    "jewels": 4,
+    "fashion": 4
   },
   "queryPage": {
     "swiss alps winter sunrise": 1,
@@ -234,20 +385,48 @@
     "luxury car mountain road night|black": 1,
     "rolex watch macro": 1,
     "porsche 911 snow|black": 1,
-    "golf course mountains morning": 1
+    "golf course mountains morning": 1,
+    "ferrari night": 1,
+    "champagne chalet fireplace": 1,
+    "diamond ring macro dark|black": 1,
+    "diamond ring macro dark": 1,
+    "diamond necklace": 1,
+    "hermes birkin bag|black": 1,
+    "hermes birkin bag": 1,
+    "louis vuitton bag luxury": 1,
+    "golf course alps|black": 1,
+    "fine dining table dark|black": 1,
+    "moncler jacket snow|black": 1,
+    "moncler jacket snow": 1,
+    "elegant woman fur coat snow": 1
   },
   "queryLeft": {
-    "golf course mountains morning": true,
-    "rolex watch macro": true,
     "porsche 911 snow|black": true,
     "skier powder alps": true,
     "swiss chalet snow night": true,
     "sports car alps": true,
-    "fine dining table dark": true
+    "fine dining table dark": true,
+    "ferrari night": true,
+    "rolex watch macro": true,
+    "champagne chalet fireplace": true,
+    "louis vuitton bag luxury": true,
+    "fine dining table dark|black": true,
+    "diamond necklace": true,
+    "elegant woman fur coat snow": true,
+    "golf course mountains morning": true
   },
   "queryDone": {
     "luxury car mountain road night|black": true,
     "golf course mountains morning|black": true,
-    "ski slope alps sunrise|black": true
+    "ski slope alps sunrise|black": true,
+    "golf course mountains morning": true,
+    "champagne chalet fireplace": true,
+    "diamond ring macro dark|black": true,
+    "diamond ring macro dark": true,
+    "hermes birkin bag|black": true,
+    "hermes birkin bag": true,
+    "golf course alps|black": true,
+    "moncler jacket snow|black": true,
+    "moncler jacket snow": true
   }
 }
