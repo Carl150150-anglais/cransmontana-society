@@ -42,7 +42,7 @@ export async function makeContactSheet(files, outPath, { columns = 3, title = ''
   return outPath;
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const args = parseArgs();
   const dir = args.dir ? path.resolve(args.dir) : args.batch ? path.join(OUT, args.batch) : null;
   if (!dir) {

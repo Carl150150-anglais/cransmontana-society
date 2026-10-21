@@ -193,7 +193,7 @@ export async function checkQuotes() {
   return { errors, quotes, counts, imperatives };
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const { errors, quotes, counts, imperatives } = await checkQuotes();
   if (errors.length) {
     console.error(`check-quotes: ${errors.length} problem(s)\n` + errors.map((e) => `  - ${e}`).join('\n'));

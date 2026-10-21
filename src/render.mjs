@@ -98,7 +98,7 @@ const SAMPLES = [
   { theme: 'watches', quoteId: 'q132' },
 ];
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const args = parseArgs();
   if (!args.samples) {
     console.error('Usage: node src/render.mjs --samples');
