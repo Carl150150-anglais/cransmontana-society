@@ -24,15 +24,29 @@ const UTM = 'utm_source=cransmontana_society&utm_medium=referral';
 const SEEN_FILE = path.join(STATE, 'unsplash-seen.json');
 const PER_THEME = Number(parseArgs()['per-theme'] ?? 4);
 
+// Displayed luxury first, anchored in snow, Alps and chalets where the query allows; then the calmer originals.
 const BASE_QUERIES = {
-  cars: ['luxury car mountain road night', 'sports car alps', 'dark luxury car garage'],
-  mountain: ['swiss alps winter sunrise', 'valais mountains', 'alpine peak clouds moody', 'crans-montana'],
-  // Fire and alcohol imagery is avoided, as in the quotes (no fireplace, candlelight or champagne).
-  chalets: ['swiss chalet snow night', 'alpine chalet interior wood', 'wooden chalet mountain view'],
-  watches: ['luxury watch macro dark', 'swiss watch wrist'],
+  cars: [
+    'porsche 911 snow', 'ferrari night', 'lamborghini mountain road', 'mercedes g class snow', 'luxury car chalet',
+    'luxury car mountain road night', 'sports car alps', 'dark luxury car garage',
+  ],
+  mountain: [
+    'private jet snow tarmac', 'helicopter alps',
+    'swiss alps winter sunrise', 'valais mountains', 'alpine peak clouds moody', 'crans-montana',
+  ],
+  chalets: [
+    'luxury chalet interior champagne', 'chalet hot tub snow night',
+    'swiss chalet snow night', 'alpine chalet interior wood', 'wooden chalet mountain view',
+  ],
+  watches: ['rolex watch macro', 'hublot watch', 'luxury watch diamonds dark', 'luxury watch macro dark', 'swiss watch wrist'],
   ski: ['ski slope alps sunrise', 'skier powder alps'],
   golf: ['golf course mountains morning'],
-  dining: ['fine dining table dark', 'gourmet plate dark'],
+  dining: ['champagne chalet fireplace', 'fine dining table dark', 'gourmet plate dark'],
+  jewels: ['diamond ring macro dark', 'diamond necklace'],
+  fashion: [
+    'hermes birkin bag', 'louis vuitton bag luxury', 'moncler jacket snow',
+    'elegant woman fur coat snow', 'woman evening dress chalet', 'woman luxury ski outfit',
+  ],
 };
 const QUERIES = {
   ...BASE_QUERIES,
@@ -42,9 +56,22 @@ const QUERIES = {
 // Every other query asks for dark photos.
 const DARK = new Set(Object.values(BASE_QUERIES).flat().filter((_, i) => i % 2 === 0));
 
-// Photo descriptions that would clash with the page rules (fire, alcohol, parties, loss)
-// or keep showing up off-topic (smartwatches, cable cars under "car", glassware on tables).
-const AVOID = /\b(smart ?watch(es)?|apple watch|cable car|glasses|fire|fires|fireplace|firework|fireworks|campfire|bonfire|flames?|candles?|candlelight|burning|smoke|smoking|sparklers?|champagne|wine|cocktails?|beer|whisk(e)?y|vodka|alcohol|drinks?|bar|pub|nightclub|nightlife|party|parties|celebration|new year|dj|concert|accident|crash|funeral|memorial|grave|cemetery)\b/i;
+// Photo descriptions that would clash with the page rules (parties, nightlife, loss) or keep showing up
+// off-topic (smartwatches, cable cars under "car"). Champagne and fireplaces are wanted for chalets and dining.
+const AVOID = /\b(smart ?watch(es)?|apple watch|cable car|firework|fireworks|sparklers?|campfire|bonfire|burning (house|building|car)|smoking|cigarettes?|cocktails?|beer|whisk(e)?y|vodka|bar|pub|nightclub|nightlife|party|parties|celebration|new year|dj|concert|accident|crash|funeral|memorial|grave|cemetery)\b/i;
+// Photos of people: seen from the back, in profile or in silhouette come first; suggestive poses are never kept.
+const PERSON = /\b(woman|women|man|men|girl|boy|person|people|lady|model|couple|skier|snowboarder)\b/i;
+const DISCREET_POSE = /\b(back|behind|silhouette|silhouetted|profile|rear|walking away|looking away|facing away|side view|from afar|in the distance)\b/i;
+const SUGGESTIVE = /\b(lingerie|bikini|underwear|swimsuit|swimwear|bra|topless|shirtless|naked|nude|sexy|seductive|sensual|provocative|erotic|cleavage|in bed|lying on (a |the )?bed)\b/i;
+const IN_WATER = /\b(hot tub|jacuzzi|bath|bathtub|pool|sauna)\b/i;
+
+const describe = (p) => `${p.alt_description ?? ''} ${p.description ?? ''} ${(p.tags ?? []).map((t) => t.title).join(' ')}`;
+function acceptable(p) {
+  const text = describe(p);
+  return !AVOID.test(text) && !SUGGESTIVE.test(text) && !(PERSON.test(text) && IN_WATER.test(text));
+}
+// 0 = no person, or a person seen from the back / in profile / in silhouette; 1 = any other photo of a person.
+const poseRank = (p) => (PERSON.test(describe(p)) && !DISCREET_POSE.test(describe(p)) ? 1 : 0);
 
 let requests = 0;
 let lastRequestAt = 0;
@@ -107,9 +134,9 @@ async function searchPage(query, black) {
   const data = await api(`/search/photos?${params}`);
   // Rotation state only advances once a search has succeeded.
   seen.queryPage[key] = page;
-  const usable = data.results.filter(
-    (p) => p.height >= MIN_HEIGHT && !AVOID.test(`${p.alt_description ?? ''} ${p.description ?? ''}`)
-  );
+  const usable = data.results
+    .filter((p) => p.height >= MIN_HEIGHT && acceptable(p))
+    .sort((a, b) => poseRank(a) - poseRank(b)); // stable: keeps Unsplash relevance order within each rank
   console.log(`  search "${query}"${black ? ' (black)' : ''} p${page}: ${data.results.length} results, ${usable.length} usable`);
   return usable;
 }

@@ -4,9 +4,10 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { QUOTES, THEMES, readJson } from './paths.mjs';
 
+// jewels and fashion took 10 quotes each from ambition and discipline.
 export const THEME_COUNTS = {
-  ambition: 50, mountain: 30, discipline: 25, cars: 25, watches: 20,
-  chalets: 15, ski: 15, golf: 10, dining: 10,
+  ambition: 40, mountain: 30, discipline: 15, cars: 25, watches: 20,
+  chalets: 15, ski: 15, golf: 10, dining: 10, jewels: 10, fashion: 10,
 };
 const SEASONS = new Set(['all', 'winter', 'summer']);
 const MAX_LENGTH = 64;

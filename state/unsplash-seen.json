@@ -57,7 +57,7 @@
     },
     "s1NoABweLEQ": {
       "theme": "mountain",
-      "photographer": "Dario Brönnimann",
+      "photographer": "Dario Br\u00f6nnimann",
       "username": "dariobroe",
       "downloaded_at": "2026-10-21T16:08:25.975Z"
     },
@@ -94,7 +94,7 @@
     },
     "orI7hd1tNY0": {
       "theme": "dining",
-      "photographer": "Mélyna Côté",
+      "photographer": "M\u00e9lyna C\u00f4t\u00e9",
       "username": "laptiteminimaliste",
       "downloaded_at": "2026-10-21T16:08:39.184Z"
     },
@@ -193,15 +193,7 @@
       "downloaded_at": "2026-10-21T16:09:14.551Z"
     }
   },
-  "queryCursor": {
-    "ambition": 1,
-    "cars": 2,
-    "watches": 1,
-    "chalets": 1,
-    "ski": 2,
-    "golf": 1,
-    "dining": 1
-  },
+  "queryCursor": {},
   "queryPage": {
     "swiss alps winter sunrise": 1,
     "sports car alps": 1,

@@ -13,7 +13,7 @@ export const STATE = path.join(ROOT, 'state');
 export const OUT = path.join(ROOT, 'out');
 export const DOCS = path.join(ROOT, 'docs');
 
-export const THEMES = ['ambition', 'mountain', 'discipline', 'cars', 'watches', 'chalets', 'ski', 'golf', 'dining'];
+export const THEMES = ['ambition', 'mountain', 'discipline', 'cars', 'watches', 'chalets', 'ski', 'golf', 'dining', 'jewels', 'fashion'];
 
 export async function readJson(file, fallback) {
   try {

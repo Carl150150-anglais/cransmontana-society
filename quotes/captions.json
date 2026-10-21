@@ -4,29 +4,24 @@
       "Some goals are best considered from a little higher up.",
       "A sunny plateau at 1,500 metres, with the whole Rhône valley below. Good for perspective.",
       "Quiet ambition, alpine air.",
-      "The plateau rewards the early riser.",
-      "Altitude has a way of sharpening intentions.",
-      "Set the standard early. The mountains will keep you to it."
+      "Altitude has a way of sharpening intentions."
     ],
     "mountain": [
       "First light over the Valais Alps.",
       "From the plateau, the panorama runs from peak to peak across the Valais.",
       "Silence, granite and a sky that goes on forever.",
       "The mountains keep their own schedule.",
-      "A view worth waking up for.",
       "Above the Rhône valley, the light arrives early."
     ],
     "discipline": [
       "The routine begins before the slopes open.",
       "Precision, every single morning.",
-      "Quiet habits, high standards.",
       "Early start, clear head, alpine air."
     ],
     "cars": [
       "Mountain roads were made for unhurried driving.",
       "The climb to Crans-Montana, one hairpin at a time.",
       "Engine warm, valley below, road ahead.",
-      "Driving the Valais the way it deserves.",
       "Some roads are a destination in themselves."
     ],
     "watches": [
@@ -55,8 +50,17 @@
     "dining": [
       "Dinner at altitude, taken slowly.",
       "Alpine produce, prepared with care.",
-      "A table with a view.",
-      "The art of the long lunch."
+      "A table with a view."
+    ],
+    "jewels": [
+      "A little light, worn close.",
+      "Brilliance, kept understated.",
+      "Some pieces are made to be noticed slowly."
+    ],
+    "fashion": [
+      "Alpine style, quietly assembled.",
+      "Dressed for the altitude.",
+      "Elegance that holds up in the cold."
     ]
   },
   "hashtags": {
@@ -70,7 +74,9 @@
       "chalets": ["#SwissChalet", "#ChaletLife", "#AlpineHome", "#MountainHome"],
       "ski": ["#SkiAlps", "#SkiSwitzerland", "#AlpineSki", "#Slopes"],
       "golf": ["#AlpineGolf", "#MountainGolf", "#GolfInSwitzerland", "#Golf"],
-      "dining": ["#FineDining", "#AlpineCuisine", "#SwissCuisine", "#Gastronomy"]
+      "dining": ["#FineDining", "#AlpineCuisine", "#SwissCuisine", "#Gastronomy"],
+      "jewels": ["#FineJewelry", "#HighJewelry", "#Diamonds", "#QuietLuxury"],
+      "fashion": ["#AlpineStyle", "#SkiStyle", "#WinterStyle", "#QuietLuxury"]
     }
   }
 }
