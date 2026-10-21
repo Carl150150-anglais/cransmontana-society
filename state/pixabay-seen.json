@@ -1,0 +1,81 @@
+{
+  "used": {
+    "21588": {
+      "slot": "08",
+      "query": "skiing powder",
+      "author": "RoyBuri",
+      "page": "https://pixabay.com/videos/id-21588/",
+      "reel": "2026-10-21_luxury.mp4"
+    },
+    "22512": {
+      "slot": "09",
+      "query": "alpine",
+      "author": "luc_toutsimplement",
+      "page": "https://pixabay.com/videos/id-22512/",
+      "reel": "2026-10-21_luxury.mp4"
+    },
+    "38370": {
+      "slot": "06",
+      "query": "alps drone sunrise",
+      "author": "Ronin_Studio_Munich",
+      "page": "https://pixabay.com/videos/id-38370/",
+      "reel": "2026-10-21_luxury.mp4"
+    },
+    "108078": {
+      "slot": "07",
+      "query": "champagne pouring",
+      "author": "NickyPe",
+      "page": "https://pixabay.com/videos/id-108078/",
+      "reel": "2026-10-21_luxury.mp4"
+    },
+    "190776": {
+      "slot": "05",
+      "query": "fireplace chalet",
+      "author": "MountainDweller",
+      "page": "https://pixabay.com/videos/id-190776/",
+      "reel": "2026-10-21_luxury.mp4"
+    },
+    "204582": {
+      "slot": "03",
+      "query": "diamond jewelry",
+      "author": "crows",
+      "page": "https://pixabay.com/videos/id-204582/",
+      "reel": "2026-10-21_luxury.mp4"
+    },
+    "231544": {
+      "slot": "02",
+      "query": "luxury watch",
+      "author": "Afzaal0001",
+      "page": "https://pixabay.com/videos/id-231544/",
+      "reel": "2026-10-21_luxury.mp4"
+    },
+    "254787": {
+      "slot": "04",
+      "query": "alpine",
+      "author": "nirjharbasakuet",
+      "page": "https://pixabay.com/videos/id-254787/",
+      "reel": "2026-10-21_luxury.mp4"
+    },
+    "305657": {
+      "slot": "10",
+      "query": "alpine",
+      "author": "tham_ms",
+      "page": "https://pixabay.com/videos/id-305657/",
+      "reel": "2026-10-21_luxury.mp4"
+    },
+    "325502": {
+      "slot": "01",
+      "query": "luxury car snow road",
+      "author": "Motionwell",
+      "page": "https://pixabay.com/videos/id-325502/",
+      "reel": "2026-10-21_luxury.mp4"
+    }
+  },
+  "rejected": {
+    "71745": "cake glaze pouring, not champagne",
+    "126924": "illustrated animation, not footage",
+    "211152": "tropical villa with palms, off-location for the Swiss Alps",
+    "317800": "3D render (Studio_Virtual_Reality)",
+    "363199": "butterfly, off-subject for woman fur coat snow"
+  }
+}

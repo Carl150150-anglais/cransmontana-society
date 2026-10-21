@@ -15,6 +15,7 @@
     "build": "node src/build.mjs",
     "sheet": "node src/sheet.mjs",
     "publish": "node src/publish.mjs",
+    "reel": "node src/reel.mjs",
     "browsers": "PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium"
   },
   "dependencies": {

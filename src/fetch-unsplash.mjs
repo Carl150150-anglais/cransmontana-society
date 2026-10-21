@@ -8,6 +8,7 @@ import { readdir, writeFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import dotenv from 'dotenv';
 import { ROOT, PHOTOS_UNSPLASH, STATE, THEMES, readJson, writeJson, parseArgs } from './paths.mjs';
+import { AVOID, PERSON, DISCREET_POSE, SUGGESTIVE, IN_WATER } from './filters.mjs';
 
 dotenv.config({ path: path.join(ROOT, '.env'), quiet: true });
 const KEY = process.env.UNSPLASH_ACCESS_KEY?.trim();
@@ -56,15 +57,6 @@ const QUERIES = {
 // Every other query asks for dark photos.
 const DARK = new Set(Object.values(BASE_QUERIES).flat().filter((_, i) => i % 2 === 0));
 
-// Photo descriptions that would clash with the page rules (parties, nightlife, loss) or keep showing up
-// off-topic (smartwatches, cable cars under "car", book covers, seaside, rainbows, crowns).
-// Champagne and fireplaces are wanted for chalets and dining.
-const AVOID = /\b(smart ?watch(es)?|apple watch|cable car|book|sea|ocean|beach|palm trees?|tropical|rainbow|crown|firework|fireworks|sparklers?|campfire|bonfire|burning (house|building|car)|smoking|cigarettes?|cocktails?|beer|whisk(e)?y|vodka|bar|pub|nightclub|nightlife|party|parties|celebration|new year|dj|concert|accident|crash|funeral|memorial|grave|cemetery)\b/i;
-// Photos of people: seen from the back, in profile or in silhouette come first; suggestive poses are never kept.
-const PERSON = /\b(woman|women|man|men|girl|boy|person|people|lady|model|couple|skier|snowboarder)\b/i;
-const DISCREET_POSE = /\b(back|behind|silhouette|silhouetted|profile|rear|walking away|looking away|facing away|side view|from afar|in the distance)\b/i;
-const SUGGESTIVE = /\b(lingerie|bikini|underwear|swimsuit|swimwear|bra|topless|shirtless|naked|nude|sexy|seductive|sensual|provocative|erotic|cleavage|in bed|lying on (a |the )?bed)\b/i;
-const IN_WATER = /\b(hot tub|jacuzzi|bath|bathtub|pool|sauna)\b/i;
 
 const describe = (p) => `${p.alt_description ?? ''} ${p.description ?? ''} ${(p.tags ?? []).map((t) => t.title).join(' ')}`;
 function acceptable(p) {

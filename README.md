@@ -75,6 +75,21 @@ Un lot produit, dans `out/<lot>/` (local, non versionné) :
 
 Les PNG et `posts.json` sont copiés dans `docs/posts/<lot>/`, ce qui les rend publics après `npm run publish`.
 
+## Le reel ("the luxury reel")
+
+```sh
+npm run reel                      # out/reels/<date>_luxury.mp4, _cover.jpg, .txt
+npm run reel -- --dry-run         # montre les 10 clips choisis, sans rien télécharger
+npm run reel -- --force           # refait le reel du jour avec d'autres clips
+```
+
+- **Format.** 19,5 s en 9:16 : carte titre (2 s), 10 clips de 1,5 s en cut sec, carte de fin (2,5 s).
+- **Clips.** Ils viennent de l'API vidéo Pixabay (`PIXABAY_API_KEY` dans `.env`), avec une recherche par emplacement. Un fichier `videos/stock/03_mon-clip.mp4` remplace l'emplacement 03.
+- **Étalonnage.** Le même sur tous les clips. Les réglages sont dans le bloc `GRADE`, en haut de `src/reel.mjs`.
+- **Son.** La piste audio est muette : ajoute la musique dans Instagram au moment de poster.
+- **Crédits.** Le fichier `.txt` liste les clips et les crédits « Video by … on Pixabay ».
+- **Clips déjà vus.** Ceux utilisés ou écartés sont mémorisés dans `state/pixabay-seen.json`. Pour écarter un clip, ajoute son id dans `rejected`.
+
 ## La ligne de crédit 📷
 
 Chaque post fait avec une photo Unsplash a une ligne `📷 <photographe> via Unsplash` dans sa légende.

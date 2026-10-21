@@ -24,6 +24,61 @@ export function pngSize(buf) {
   return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
 }
 
+// Waits for the fonts and throws rather than let the page render with a fallback font.
+export async function assertFontsLoaded(page, sample) {
+  const missing = await page.evaluate(
+    async ({ fonts, sample }) => {
+      await Promise.all(fonts.map((f) => document.fonts.load(f.css, sample)));
+      await document.fonts.ready;
+      // document.fonts.check() is also true for a family that was never declared,
+      // so require an actually loaded FontFace for every family and weight too.
+      return fonts
+        .filter((f) => {
+          const loaded = [...document.fonts].some(
+            (face) => face.family.replace(/["']/g, '') === f.family && String(face.weight) === f.weight && face.status === 'loaded'
+          );
+          return !loaded || !document.fonts.check(f.css, sample);
+        })
+        .map((f) => `${f.family} ${f.weight}`);
+    },
+    { fonts: REQUIRED_FONTS, sample }
+  );
+  if (missing.length)
+    throw new Error(
+      `Fonts not loaded: ${missing.join(', ')}. Run "npm run fonts" and check assets/fonts/fonts.css. ` +
+        'Refusing to render with a fallback font.'
+    );
+}
+
+// Renders HTML cards (e.g. src/reel-card.html) with the same font guard as the posts.
+// Each card: { out, width, height, variant, fill: { elementId: text }, transparent }.
+export async function renderCards(template, cards) {
+  const browser = await launchBrowser();
+  try {
+    for (const { out, width, height, variant, fill = {}, transparent = false } of cards) {
+      const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
+      await page.goto(pathToFileURL(template).href, { waitUntil: 'load' });
+      await page.evaluate(
+        ({ variant, fill }) => {
+          document.body.dataset.variant = variant;
+          for (const [id, text] of Object.entries(fill)) document.getElementById(id).textContent = text;
+        },
+        { variant, fill }
+      );
+      await assertFontsLoaded(page, `${Object.values(fill).join(' ')} cransmontana.society CM SOCIETY`);
+      const png = await page.screenshot({ type: 'png', omitBackground: transparent });
+      const size = pngSize(png);
+      if (size.width !== width || size.height !== height)
+        throw new Error(`card ${variant} rendered ${size.width}x${size.height}, expected ${width}x${height}`);
+      await mkdir(path.dirname(out), { recursive: true });
+      await writeFile(out, png);
+      await page.close();
+    }
+  } finally {
+    await browser.close();
+  }
+}
+
 export async function createRenderer({ template = TEMPLATE } = {}) {
   const browser = await launchBrowser();
   const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 });
@@ -31,43 +86,25 @@ export async function createRenderer({ template = TEMPLATE } = {}) {
   // Returns { fontSize, lines } for the rendered quote.
   async function render(quote, photoPath, outPath) {
     await page.goto(pathToFileURL(template).href, { waitUntil: 'load' });
-    const result = await page.evaluate(
-      async ({ text, photoUrl, sizes, fonts }) => {
+    await page.evaluate(
+      async ({ text, photoUrl }) => {
         const img = document.getElementById('photo');
         img.src = photoUrl;
         await img.decode();
-        const el = document.getElementById('quote');
-        el.textContent = text;
-
-        const sample = `${text} cransmontana.society CM SOCIETY`;
-        await Promise.all(fonts.map((f) => document.fonts.load(f.css, sample)));
-        await document.fonts.ready;
-        // document.fonts.check() is also true for a family that was never declared,
-        // so require an actually loaded FontFace for every family and weight too.
-        const missing = fonts
-          .filter((f) => {
-            const loaded = [...document.fonts].some(
-              (face) => face.family.replace(/["']/g, '') === f.family && String(face.weight) === f.weight && face.status === 'loaded'
-            );
-            return !loaded || !document.fonts.check(f.css, sample);
-          })
-          .map((f) => `${f.family} ${f.weight}`);
-        if (missing.length) return { missing };
-
-        for (const size of sizes) {
-          el.style.fontSize = `${size}px`;
-          const lines = Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight));
-          if (lines <= 2) return { fontSize: size, lines };
-        }
-        return { tooLong: true };
+        document.getElementById('quote').textContent = text;
       },
-      { text: quote.text, photoUrl: pathToFileURL(photoPath).href, sizes: FONT_SIZES, fonts: REQUIRED_FONTS }
+      { text: quote.text, photoUrl: pathToFileURL(photoPath).href }
     );
-    if (result.missing)
-      throw new Error(
-        `Fonts not loaded: ${result.missing.join(', ')}. Run "npm run fonts" and check assets/fonts/fonts.css. ` +
-          'Refusing to render with a fallback font.'
-      );
+    await assertFontsLoaded(page, `${quote.text} cransmontana.society CM SOCIETY`);
+    const result = await page.evaluate((sizes) => {
+      const el = document.getElementById('quote');
+      for (const size of sizes) {
+        el.style.fontSize = `${size}px`;
+        const lines = Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight));
+        if (lines <= 2) return { fontSize: size, lines };
+      }
+      return { tooLong: true };
+    }, FONT_SIZES);
     if (result.tooLong)
       throw new Error(`${quote.id}: needs more than 2 lines even at ${FONT_SIZES.at(-1)}px: ${quote.text}`);
 
