@@ -1,0 +1,24 @@
+{
+  "name": "cransmontana-society",
+  "version": "1.0.0",
+  "description": "Content robot for @cransmontana.society: renders ready-to-post 1080x1350 quote images.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "fonts": "node src/fonts.mjs",
+    "fetch": "node src/fetch-unsplash.mjs",
+    "check": "node src/check-quotes.mjs",
+    "samples": "node src/render.mjs --samples",
+    "build": "node src/build.mjs",
+    "sheet": "node src/sheet.mjs",
+    "publish": "node src/publish.mjs",
+    "browsers": "PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.8",
+    "playwright": "^1.64.1"
+  }
+}
