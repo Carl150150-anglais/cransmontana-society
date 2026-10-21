@@ -14,6 +14,7 @@ import { listPhotos } from './photos.mjs';
 import { createRenderer } from './render.mjs';
 import { makeContactSheet } from './sheet.mjs';
 import { writeGallery } from './gallery.mjs';
+import { seasonFor, inSeason } from './season.mjs';
 
 const REPO = 'cransmontana-society';
 const USED_FILE = path.join(STATE, 'used.json');
@@ -96,16 +97,6 @@ async function writeBatchFiles(posts, { pngs = posts.map((p) => p.file) } = {}) 
   await writeGallery();
 }
 
-// --- season -------------------------------------------------------------------
-
-function seasonFor(name) {
-  const date = /^\d{4}-\d{2}-\d{2}$/.test(name) ? new Date(`${name}T12:00:00`) : new Date();
-  const month = date.getMonth() + 1;
-  if (month >= 11 || month <= 3) return 'winter';
-  if (month >= 5 && month <= 9) return 'summer';
-  return null; // April and October: only quotes for all seasons
-}
-
 // --- modes ----------------------------------------------------------------------
 
 const quotes = await readJson(path.join(QUOTES, 'quotes.json'));
@@ -125,7 +116,7 @@ async function build(count) {
   // Plan everything first, so a shortage stops the build before anything is rendered.
   const season = seasonFor(batch);
   const quotesLeft = Object.fromEntries(
-    THEMES.map((t) => [t, quotes.filter((q) => q.theme === t && !used[q.id] && (q.season === 'all' || q.season === season))])
+    THEMES.map((t) => [t, quotes.filter((q) => q.theme === t && !used[q.id] && inSeason(q, season))])
   );
   const photosLeft = Object.fromEntries(
     await Promise.all(THEMES.map(async (t) => [t, (await listPhotos(t)).filter((p) => !photosUsed[p.key])]))

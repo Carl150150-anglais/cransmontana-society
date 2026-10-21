@@ -1,5 +1,19 @@
 {
   "used": {
+    "14628": {
+      "slot": "07",
+      "query": "champagne pouring",
+      "author": "torstensimon",
+      "page": "https://pixabay.com/videos/id-14628/",
+      "reel": "2026-10-21_luxury_1.mp4"
+    },
+    "15615": {
+      "slot": "02",
+      "query": "luxury watch",
+      "author": "Matthias_Groeneveld",
+      "page": "https://pixabay.com/videos/id-15615/",
+      "reel": "2026-10-21_luxury_2.mp4"
+    },
     "21588": {
       "slot": "08",
       "query": "skiing powder",
@@ -14,12 +28,96 @@
       "page": "https://pixabay.com/videos/id-22512/",
       "reel": "2026-10-21_luxury.mp4"
     },
+    "22924": {
+      "slot": "08",
+      "query": "skiing powder",
+      "author": "adege",
+      "page": "https://pixabay.com/videos/id-22924/",
+      "reel": "2026-10-21_luxury_2.mp4"
+    },
+    "23958": {
+      "slot": "01",
+      "query": "alpine",
+      "author": "Wanderfrust",
+      "page": "https://pixabay.com/videos/id-23958/",
+      "reel": "2026-10-21_luxury_2.mp4"
+    },
+    "27148": {
+      "slot": "04",
+      "query": "alpine",
+      "author": "adege",
+      "page": "https://pixabay.com/videos/id-27148/",
+      "reel": "2026-10-21_luxury_2.mp4"
+    },
     "38370": {
       "slot": "06",
       "query": "alps drone sunrise",
       "author": "Ronin_Studio_Munich",
       "page": "https://pixabay.com/videos/id-38370/",
       "reel": "2026-10-21_luxury.mp4"
+    },
+    "39863": {
+      "slot": "02",
+      "query": "luxury watch",
+      "author": "kried_yang",
+      "page": "https://pixabay.com/videos/id-39863/",
+      "reel": "2026-10-21_luxury_1.mp4"
+    },
+    "44701": {
+      "slot": "09",
+      "query": "alpine",
+      "author": "adege",
+      "page": "https://pixabay.com/videos/id-44701/",
+      "reel": "2026-10-21_luxury_1.mp4"
+    },
+    "44702": {
+      "slot": "01",
+      "query": "alpine",
+      "author": "adege",
+      "page": "https://pixabay.com/videos/id-44702/",
+      "reel": "2026-10-21_luxury_3.mp4"
+    },
+    "45569": {
+      "slot": "07",
+      "query": "alpine",
+      "author": "xat-ch",
+      "page": "https://pixabay.com/videos/id-45569/",
+      "reel": "2026-10-21_luxury_2.mp4"
+    },
+    "48868": {
+      "slot": "03",
+      "query": "alpine",
+      "author": "Hassas_Arts",
+      "page": "https://pixabay.com/videos/id-48868/",
+      "reel": "2026-10-21_luxury_3.mp4"
+    },
+    "64208": {
+      "slot": "08",
+      "query": "skiing powder",
+      "author": "xat-ch",
+      "page": "https://pixabay.com/videos/id-64208/",
+      "reel": "2026-10-21_luxury_3.mp4"
+    },
+    "84543": {
+      "slot": "03",
+      "query": "alpine",
+      "author": "NickyPe",
+      "page": "https://pixabay.com/videos/id-84543/",
+      "reel": "2026-10-21_luxury_1.mp4"
+    },
+    "85373": {
+      "slot": "06",
+      "query": "alps drone sunrise",
+      "author": "Ambient_Nature_Atmosphere",
+      "page": "https://pixabay.com/videos/id-85373/",
+      "reel": "2026-10-21_luxury_1.mp4"
+    },
+    "97976": {
+      "slot": "06",
+      "query": "alps drone sunrise",
+      "author": "edcangri",
+      "page": "https://pixabay.com/videos/id-97976/",
+      "reel": "2026-10-21_luxury_3.mp4"
     },
     "108078": {
       "slot": "07",
@@ -28,12 +126,47 @@
       "page": "https://pixabay.com/videos/id-108078/",
       "reel": "2026-10-21_luxury.mp4"
     },
+    "136740": {
+      "slot": "02",
+      "query": "luxury watch",
+      "author": "fotoblend",
+      "page": "https://pixabay.com/videos/id-136740/",
+      "reel": "2026-10-21_luxury_3.mp4"
+    },
+    "163017": {
+      "slot": "09",
+      "query": "alpine",
+      "author": "NickyPe",
+      "page": "https://pixabay.com/videos/id-163017/",
+      "reel": "2026-10-21_luxury_3.mp4"
+    },
+    "177904": {
+      "slot": "03",
+      "query": "alpine",
+      "author": "NickyPe",
+      "page": "https://pixabay.com/videos/id-177904/",
+      "reel": "2026-10-21_luxury_2.mp4"
+    },
+    "190192": {
+      "slot": "07",
+      "query": "alpine",
+      "author": "NickyPe",
+      "page": "https://pixabay.com/videos/id-190192/",
+      "reel": "2026-10-21_luxury_3.mp4"
+    },
     "190776": {
       "slot": "05",
       "query": "fireplace chalet",
       "author": "MountainDweller",
       "page": "https://pixabay.com/videos/id-190776/",
       "reel": "2026-10-21_luxury.mp4"
+    },
+    "202222": {
+      "slot": "05",
+      "query": "fireplace chalet",
+      "author": "conte_public",
+      "page": "https://pixabay.com/videos/id-202222/",
+      "reel": "2026-10-21_luxury_1.mp4"
     },
     "204582": {
       "slot": "03",
@@ -42,12 +175,61 @@
       "page": "https://pixabay.com/videos/id-204582/",
       "reel": "2026-10-21_luxury.mp4"
     },
+    "208683": {
+      "slot": "10",
+      "query": "alpine",
+      "author": "NickyPe",
+      "page": "https://pixabay.com/videos/id-208683/",
+      "reel": "2026-10-21_luxury_1.mp4"
+    },
+    "222076": {
+      "slot": "06",
+      "query": "alps drone sunrise",
+      "author": "Ambient_Nature_Atmosphere",
+      "page": "https://pixabay.com/videos/id-222076/",
+      "reel": "2026-10-21_luxury_2.mp4"
+    },
+    "225430": {
+      "slot": "10",
+      "query": "alpine",
+      "author": "adege",
+      "page": "https://pixabay.com/videos/id-225430/",
+      "reel": "2026-10-21_luxury_2.mp4"
+    },
+    "227765": {
+      "slot": "09",
+      "query": "alpine",
+      "author": "adege",
+      "page": "https://pixabay.com/videos/id-227765/",
+      "reel": "2026-10-21_luxury_2.mp4"
+    },
+    "229462": {
+      "slot": "10",
+      "query": "alpine",
+      "author": "Spacemonkii",
+      "page": "https://pixabay.com/videos/id-229462/",
+      "reel": "2026-10-21_luxury_3.mp4"
+    },
     "231544": {
       "slot": "02",
       "query": "luxury watch",
       "author": "Afzaal0001",
       "page": "https://pixabay.com/videos/id-231544/",
       "reel": "2026-10-21_luxury.mp4"
+    },
+    "234515": {
+      "slot": "05",
+      "query": "fireplace chalet",
+      "author": "BFCMUSIC",
+      "page": "https://pixabay.com/videos/id-234515/",
+      "reel": "2026-10-21_luxury_2.mp4"
+    },
+    "248452": {
+      "slot": "04",
+      "query": "alpine",
+      "author": "TungArt7",
+      "page": "https://pixabay.com/videos/id-248452/",
+      "reel": "2026-10-21_luxury_3.mp4"
     },
     "254787": {
       "slot": "04",
@@ -56,6 +238,13 @@
       "page": "https://pixabay.com/videos/id-254787/",
       "reel": "2026-10-21_luxury.mp4"
     },
+    "270940": {
+      "slot": "01",
+      "query": "alpine",
+      "author": "EclipseChasers",
+      "page": "https://pixabay.com/videos/id-270940/",
+      "reel": "2026-10-21_luxury_1.mp4"
+    },
     "305657": {
       "slot": "10",
       "query": "alpine",
@@ -63,18 +252,49 @@
       "page": "https://pixabay.com/videos/id-305657/",
       "reel": "2026-10-21_luxury.mp4"
     },
+    "322246": {
+      "slot": "08",
+      "query": "skiing powder",
+      "author": "Gylfi",
+      "page": "https://pixabay.com/videos/id-322246/",
+      "reel": "2026-10-21_luxury_1.mp4"
+    },
+    "322806": {
+      "slot": "05",
+      "query": "fireplace chalet",
+      "author": "Kaffeesüchtig",
+      "page": "https://pixabay.com/videos/id-322806/",
+      "reel": "2026-10-21_luxury_3.mp4"
+    },
     "325502": {
       "slot": "01",
       "query": "luxury car snow road",
       "author": "Motionwell",
       "page": "https://pixabay.com/videos/id-325502/",
       "reel": "2026-10-21_luxury.mp4"
+    },
+    "329674": {
+      "slot": "04",
+      "query": "woman fur coat snow",
+      "author": "32215527",
+      "page": "https://pixabay.com/videos/id-329674/",
+      "reel": "2026-10-21_luxury_1.mp4"
     }
   },
   "rejected": {
+    "21223": "alarm clock on a wooden floor, not a luxury watch",
+    "57082": "hand holding a glass, no fireplace",
     "71745": "cake glaze pouring, not champagne",
+    "85658": "meerkat (tag 'watch out')",
+    "88335": "meerkat (tag 'watch')",
+    "110714": "mosque interior",
     "126924": "illustrated animation, not footage",
+    "138813": "Diamond Head, Honolulu",
+    "144660": "meerkat (tag 'watch')",
     "211152": "tropical villa with palms, off-location for the Swiss Alps",
+    "212954": "raw crystals, not jewellery",
+    "223892": "computer desk",
+    "253998": "family with a baby",
     "317800": "3D render (Studio_Virtual_Reality)",
     "363199": "butterfly, off-subject for woman fur coat snow"
   }

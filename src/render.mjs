@@ -79,6 +79,29 @@ export async function renderCards(template, cards) {
   }
 }
 
+// Number of lines each text takes in element #id of a card variant, with the real fonts.
+export async function measureLines(template, { width, height, variant, id }, texts) {
+  const browser = await launchBrowser();
+  try {
+    const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
+    await page.goto(pathToFileURL(template).href, { waitUntil: 'load' });
+    await page.evaluate((v) => { document.body.dataset.variant = v; }, variant);
+    await assertFontsLoaded(page, texts.join(' '));
+    return await page.evaluate(
+      ({ id, texts }) => {
+        const el = document.getElementById(id);
+        return texts.map((t) => {
+          el.textContent = t;
+          return Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight));
+        });
+      },
+      { id, texts }
+    );
+  } finally {
+    await browser.close();
+  }
+}
+
 export async function createRenderer({ template = TEMPLATE } = {}) {
   const browser = await launchBrowser();
   const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 });
