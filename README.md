@@ -1,6 +1,9 @@
 # cransmontana.society — robot de contenu
 
-Ce dépôt fabrique des lots d'images prêtes à poster pour **@cransmontana.society** : une photo sombre et haut de gamme, une citation courte au centre, le nom de la page en haut, le monogramme CM en bas. Format **1080 × 1350 PNG**.
+Ce dépôt fabrique des lots d'images prêtes à poster pour **@cransmontana.society**.
+
+- **Par défaut :** la photo seule avec la passe de finition, sans texte, et la citation dans la légende. Format **1080 × 1350 JPEG**.
+- **Avec `--overlay`, l'ancien style :** une citation courte au centre, le nom de la page en haut, le monogramme CM en bas. Format **1080 × 1350 PNG**.
 
 Les lots sont publiés sur GitHub Pages pour que tu les relises et qu'un planificateur puisse les récupérer par URL publique.
 
@@ -40,7 +43,7 @@ Thèmes : `ambition`, `mountain`, `discipline`, `cars`, `watches`, `chalets`, `s
 | --- | --- |
 | `npm run fetch` | Télécharge des photos Unsplash jusqu'à 4 photos inutilisées par thème (`-- --per-theme 6` pour plus). Avec `--preview`, montre d'abord les candidates à trier. |
 | `npm run check` | Vérifie la banque de citations (longueur, mots interdits, doublons…). |
-| `npm run build` | Construit un lot de 30 posts nommé à la date du jour. |
+| `npm run build` | Construit un lot de 30 posts nommé à la date du jour (photo seule ; `-- --overlay` pour l'ancien style). |
 | `npm run sheet -- --batch 2026-10-21` | Régénère la planche contact d'un lot. |
 | `npm run publish` | Commite `docs/` et `state/`, puis pousse sur GitHub. La galerie se met à jour en quelques minutes. |
 
@@ -71,26 +74,34 @@ npm run fetch -- --keep                             # télécharge les photos ga
 ### `build`
 
 ```sh
-npm run build                                       # 30 posts, lot du jour
+npm run build                                       # 30 posts, lot du jour, photo seule
+npm run build -- --overlay                          # ancien style : citation, nom de la page et monogramme sur l'image
 npm run build -- --count 20 --batch 2026-11-02      # autre taille, autre nom
 npm run build -- --dry-run                          # affiche le plan, ne fabrique rien
 npm run build -- --batch 2026-10-21 --redo 03,07    # nouvelle photo du même thème pour ces numéros
 npm run build -- --batch 2026-10-21 --redo 03,07 --dry-run   # montre les photos qui seraient prises
+npm run build -- --batch 2026-10-21 --restyle 18,19 # même photo, refaite en photo seule : 18_q192-v2.jpg
+npm run build -- --batch 2026-10-21 --scenes photos/scenes/mapping.json --skip 03,05   # images IA finies
 ```
+
+- **Passe de finition.** C'est la même passe ffmpeg que pour les scènes IA, appliquée à toutes les photos : `scale=1080:1350:flags=lanczos,eq=contrast=1.05:saturation=0.94:gamma=0.98,vignette=angle=PI/6:mode=forward,noise=alls=7:allf=t+u,unsharp=3:3:0.3`, en JPEG `-q:v 2`. Une photo qui n'est pas en 4:5 est d'abord recadrée au centre. Le réglage se trouve dans `src/finish.mjs`. Le reel garde son propre étalonnage.
+- **Légende.** En photo seule, la légende commence par la citation, puis la ligne de crédit 📷 et les hashtags. Avec `--overlay`, elle commence par une phrase de `quotes/captions.json`.
 
 - **Choix des citations.** Les citations déjà utilisées sont exclues (`state/used.json`) et les thèmes sont équilibrés.
 - **Saisons.** Les citations d'hiver sortent de novembre à mars, celles d'été de mai à septembre, les autres toute l'année.
 - **Photos.** Chaque photo sert une seule fois, tous lots confondus (`state/photos-used.json`). Si un thème n'a plus de photo, le lot emprunte des photos de montagne.
-- **`--redo`.** Change la photo des numéros indiqués et garde la même citation, sans toucher aux autres posts. La photo remplacée ne revient pas. La nouvelle photo est la meilleure photo inutilisée du thème (score de `fetch --keep`).
+- **`--redo`.** Change la photo des numéros indiqués et garde la même citation, sans toucher aux autres posts. La photo remplacée ne revient pas. La nouvelle photo est la meilleure photo inutilisée du thème (score de `fetch --keep`). Chaque post garde son style.
+- **`--restyle`.** Refait un post de l'ancien style en photo seule, avec la même photo, sous un nouveau nom (`-v2.jpg`). L'ancienne image reste en ligne, et `public_url` pointe vers la nouvelle.
+- **`--scenes`.** Place des images déjà finies, 1080 × 1350 en JPEG, copiées telles quelles et sans retraitement, sous le même genre de nom (`-v2.jpg`). Le fichier de correspondance dit quelle image va à quel numéro : `{ "batch": "2026-10-21", "ai": true, "posts": { "04": "scenes/x.jpg" } }`, avec des chemins relatifs à ce fichier. `--skip` écarte certains numéros. Avec `"ai": true`, les posts sont marqués `"ai": true` et leur légende se termine par « Image created with AI ».
 
 Un lot produit, dans `out/<lot>/` (local, non versionné) :
 
-- `NN_<citation>.png` : les images à poster ;
+- `NN_<citation>.jpg` (ou `.png` avec `--overlay`) : les images à poster ;
 - `captions.md` : pour chaque post, la légende prête à copier (phrase, ligne de crédit, hashtags) ;
-- `posts.json` : fichier, citation, thème, source de la photo, crédit, légende, `public_url` ;
+- `posts.json` : fichier, citation, thème, style (`overlay`), image IA ou non (`ai`), source de la photo, crédit, légende, `public_url` ;
 - `contact-sheet.png` : la planche de relecture.
 
-Les PNG et `posts.json` sont copiés dans `docs/posts/<lot>/`, ce qui les rend publics après `npm run publish`.
+Les images et `posts.json` sont copiés dans `docs/posts/<lot>/`, ce qui les rend publics après `npm run publish`.
 
 ## Le reel ("the luxury reel")
 
@@ -117,14 +128,17 @@ Chaque post fait avec une photo Unsplash a une ligne `📷 <photographe> via Uns
 
 Les règles de l'API Unsplash demandent de créditer le photographe pour toute photo obtenue par l'API. **Garde cette ligne quand tu postes.** La galerie, elle, crée un lien vers le profil du photographe et vers Unsplash.
 
+Les images créées par IA (`"ai": true` dans `posts.json`) n'ont pas de ligne 📷 : leur légende se termine par « Image created with AI ». **Garde aussi cette ligne.**
+
 ## Organisation
 
 ```
 src/          scripts (fetch, build, render, sheet, publish, check-quotes, fonts)
-src/template.html   gabarit du post (1080 × 1350)
+src/finish.mjs      passe de finition ffmpeg (style photo seule)
+src/template.html   gabarit de l'ancien style, avec citation (--overlay)
 quotes/       200 citations, 40 légendes et hashtags
 assets/fonts/ polices hébergées dans le dépôt
-photos/       own/, unsplash/ et candidates.json (non versionnés)
+photos/       own/, unsplash/, scenes/ et candidates.json (non versionnés)
 state/        citations et photos déjà utilisées, photos Unsplash vues
 out/          lots générés (non versionnés)
 docs/         galerie GitHub Pages et lots publiés

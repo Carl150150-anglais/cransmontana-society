@@ -7,9 +7,11 @@ const UNSPLASH_LINK = 'https://unsplash.com/?utm_source=cransmontana_society&utm
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
 function card(batch, post) {
-  const credit = post.photo_source === 'unsplash'
-    ? `<p class="credit">Photo by <a href="${esc(post.credit_url)}">${esc(post.photographer)}</a> on <a href="${UNSPLASH_LINK}">Unsplash</a></p>`
-    : '<p class="credit">Own photo</p>';
+  const credit = post.ai
+    ? '<p class="credit">Image created with AI</p>'
+    : post.photo_source === 'unsplash'
+      ? `<p class="credit">Photo by <a href="${esc(post.credit_url)}">${esc(post.photographer)}</a> on <a href="${UNSPLASH_LINK}">Unsplash</a></p>`
+      : '<p class="credit">Own photo</p>';
   return `<figure>
   <a href="posts/${esc(batch)}/${esc(post.file)}"><img src="posts/${esc(batch)}/${esc(post.file)}" width="1080" height="1350" loading="lazy" alt="${esc(post.quote)}"></a>
   <figcaption>

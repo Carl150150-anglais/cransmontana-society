@@ -1,4 +1,5 @@
-// Renders one post (quote + photo) to a 1080x1350 PNG with src/template.html.
+// Renders one post in the overlay style (quote + photo) to a 1080x1350 PNG with src/template.html.
+// The plain style (photo alone) is src/finish.mjs.
 // CLI: npm run samples   -> out/samples/ (one mountain, one cars, one watches) + contact sheet
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -22,6 +23,19 @@ const REQUIRED_FONTS = [
 export function pngSize(buf) {
   if (buf.toString('ascii', 1, 4) !== 'PNG') throw new Error('not a PNG file');
   return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+}
+
+// Width and height from the first SOF marker of a JPEG.
+export function jpegSize(buf) {
+  if (buf[0] !== 0xff || buf[1] !== 0xd8) throw new Error('not a JPEG file');
+  for (let i = 2; i + 9 < buf.length; ) {
+    if (buf[i] !== 0xff) throw new Error('corrupt JPEG: marker expected');
+    const marker = buf[i + 1];
+    if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker))
+      return { width: buf.readUInt16BE(i + 7), height: buf.readUInt16BE(i + 5) };
+    i += 2 + buf.readUInt16BE(i + 2);
+  }
+  throw new Error('corrupt JPEG: no frame header');
 }
 
 // Waits for the fonts and throws rather than let the page render with a fallback font.
