@@ -148,7 +148,8 @@
   },
   "unsplash/watches_y0RRB835wjg.jpg": {
     "batch": "2026-10-21",
-    "file": "04_q131.png"
+    "file": "04_q131.png",
+    "replaced_by": "scenes/scenes/watches_04_patek-fireplace.jpg"
   },
   "unsplash/discipline_trh2Luw30IQ.jpg": {
     "batch": "2026-10-21",
@@ -156,62 +157,126 @@
   },
   "unsplash/chalets_mLwQ_5pc_vg.jpg": {
     "batch": "2026-10-21",
-    "file": "06_q151.png"
+    "file": "06_q151.png",
+    "replaced_by": "scenes/scenes/chalets_06_family-fireplace.jpg"
   },
   "unsplash/dining_7N-Me1vw_WE.jpg": {
     "batch": "2026-10-21",
-    "file": "07_q191.png"
+    "file": "07_q191.png",
+    "replaced_by": "scenes/scenes/dining_07_krug-caviar.jpg"
   },
   "unsplash/jewels_CmmYT6Mm948.jpg": {
     "batch": "2026-10-21",
-    "file": "08_q008.png"
+    "file": "08_q008.png",
+    "replaced_by": "scenes/scenes/jewels_08_rolls-backseat.jpg"
   },
   "unsplash/fashion_EhipdpUlLd8.jpg": {
     "batch": "2026-10-21",
-    "file": "09_q081.png"
+    "file": "09_q081.png",
+    "replaced_by": "scenes/scenes/fashion_09_lamborghini-boutiques.jpg"
   },
   "unsplash/golf_lz7CudlacFw.jpg": {
     "batch": "2026-10-21",
-    "file": "10_q183.png"
+    "file": "10_q183.png",
+    "replaced_by": "scenes/scenes/golf_10_dawn-terrace.jpg"
   },
   "unsplash/ski_2KQvH_m4RPY.jpg": {
     "batch": "2026-10-21",
-    "file": "11_q172.png"
+    "file": "11_q172.png",
+    "replaced_by": "scenes/scenes/ski_11_helicopter-sunrise.jpg"
   },
   "unsplash/ambition_AAi_PKFLqdI.jpg": {
     "batch": "2026-10-21",
-    "file": "12_q002.png"
+    "file": "12_q002.png",
+    "replaced_by": "scenes/scenes/ambition_12_jet-interior.jpg"
   },
   "unsplash/mountain_Ui-w7hum7ns.jpg": {
     "batch": "2026-10-21",
-    "file": "13_q052.png"
+    "file": "13_q052.png",
+    "replaced_by": "scenes/scenes/mountain_13_alps-panorama-dawn.jpg"
   },
   "unsplash/cars_lUOuyvlT7zc.jpg": {
     "batch": "2026-10-21",
-    "file": "14_q107.png"
+    "file": "14_q107.png",
+    "replaced_by": "scenes/scenes/cars_14_bugatti-cullinan-palace.jpg"
   },
   "unsplash/watches_gJ9b48mc5qs.jpg": {
     "batch": "2026-10-21",
-    "file": "15_q132.png"
+    "file": "15_q132.png",
+    "replaced_by": "scenes/scenes/watches_15_table-daytona-nautilus.jpg"
   },
   "unsplash/discipline_1f8wFF4YSXc.jpg": {
     "batch": "2026-10-21",
-    "file": "16_q083.png"
+    "file": "16_q083.png",
+    "replaced_by": "scenes/scenes/discipline_16_snow-polo-hermes.jpg"
   },
   "unsplash/chalets_dmBzB_RF_nk.jpg": {
     "batch": "2026-10-21",
-    "file": "17_q152.png"
+    "file": "17_q152.png",
+    "replaced_by": "scenes/scenes/chalets_17_garage-ferrari-bugatti.jpg"
   },
   "unsplash/dining_vzs7C2UiA6w.jpg": {
     "batch": "2026-10-21",
-    "file": "18_q192.png"
+    "file": "18_q192-v2.jpg"
   },
   "unsplash/jewels_asqzZRsvEBg.jpg": {
     "batch": "2026-10-21",
-    "file": "19_q010.png"
+    "file": "19_q010-v2.jpg"
   },
   "unsplash/fashion_z9r2ZNtXXdg.jpg": {
     "batch": "2026-10-21",
-    "file": "20_q084.png"
+    "file": "20_q084-v2.jpg"
+  },
+  "scenes/scenes/watches_04_patek-fireplace.jpg": {
+    "batch": "2026-10-21",
+    "file": "04_q131-v2.jpg"
+  },
+  "scenes/scenes/chalets_06_family-fireplace.jpg": {
+    "batch": "2026-10-21",
+    "file": "06_q151-v2.jpg"
+  },
+  "scenes/scenes/dining_07_krug-caviar.jpg": {
+    "batch": "2026-10-21",
+    "file": "07_q191-v2.jpg"
+  },
+  "scenes/scenes/jewels_08_rolls-backseat.jpg": {
+    "batch": "2026-10-21",
+    "file": "08_q008-v2.jpg"
+  },
+  "scenes/scenes/fashion_09_lamborghini-boutiques.jpg": {
+    "batch": "2026-10-21",
+    "file": "09_q081-v2.jpg"
+  },
+  "scenes/scenes/golf_10_dawn-terrace.jpg": {
+    "batch": "2026-10-21",
+    "file": "10_q183-v2.jpg"
+  },
+  "scenes/scenes/ski_11_helicopter-sunrise.jpg": {
+    "batch": "2026-10-21",
+    "file": "11_q172-v2.jpg"
+  },
+  "scenes/scenes/ambition_12_jet-interior.jpg": {
+    "batch": "2026-10-21",
+    "file": "12_q002-v2.jpg"
+  },
+  "scenes/scenes/mountain_13_alps-panorama-dawn.jpg": {
+    "batch": "2026-10-21",
+    "file": "13_q052-v2.jpg"
+  },
+  "scenes/scenes/cars_14_bugatti-cullinan-palace.jpg": {
+    "batch": "2026-10-21",
+    "file": "14_q107-v2.jpg"
+  },
+  "scenes/scenes/watches_15_table-daytona-nautilus.jpg": {
+    "batch": "2026-10-21",
+    "file": "15_q132-v2.jpg"
+  },
+  "scenes/scenes/discipline_16_snow-polo-hermes.jpg": {
+    "batch": "2026-10-21",
+    "file": "16_q083-v2.jpg"
+  },
+  "scenes/scenes/chalets_17_garage-ferrari-bugatti.jpg": {
+    "batch": "2026-10-21",
+    "file": "17_q152-v2.jpg"
   }
 }
