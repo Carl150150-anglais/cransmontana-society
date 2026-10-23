@@ -1,14 +1,23 @@
 // Fetches portrait photos from the Unsplash API (demo tier) into photos/unsplash/.
-// Usage: npm run fetch [-- --per-theme 4]
+// Usage:
+//   npm run fetch [-- --per-theme 4]            download until each theme has that many unused photos
+//   npm run fetch -- --preview [--per-theme 5]  search only: candidates go on review sheets in out/candidates/
+//   npm run fetch -- --keep id1,id2 [--score 5] [--theme cars]
+//                                                approve candidates (optionally under another theme) and download them
+//   npm run fetch -- --keep                      download approved candidates a previous run had no budget for
+//   npm run fetch -- --reject id1,id2            drop candidates for good
 //
 // Demo-tier etiquette: at most 1 request per second and 40 API requests per run.
 // Every call to api.unsplash.com counts, including the download_location tracking pings
-// that the API guidelines require for each photo we download.
-import { readdir, writeFile, mkdir, rm } from 'node:fs/promises';
+// that the API guidelines require for each photo we download. Review sheets show the photos
+// straight from the Unsplash CDN (images.unsplash.com), which is not an API request.
+import { mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import dotenv from 'dotenv';
-import { ROOT, PHOTOS_UNSPLASH, STATE, THEMES, readJson, writeJson, parseArgs } from './paths.mjs';
+import { ROOT, OUT, PHOTOS_UNSPLASH, STATE, THEMES, readJson, writeJson, parseArgs } from './paths.mjs';
 import { AVOID, PERSON, DISCREET_POSE, SUGGESTIVE, IN_WATER } from './filters.mjs';
+import { listPhotos } from './photos.mjs';
+import { makeContactSheet } from './sheet.mjs';
 
 dotenv.config({ path: path.join(ROOT, '.env'), quiet: true });
 const KEY = process.env.UNSPLASH_ACCESS_KEY?.trim();
@@ -23,7 +32,26 @@ const MIN_INTERVAL_MS = 1100;
 const MIN_HEIGHT = 2000;
 const UTM = 'utm_source=cransmontana_society&utm_medium=referral';
 const SEEN_FILE = path.join(STATE, 'unsplash-seen.json');
-const PER_THEME = Number(parseArgs()['per-theme'] ?? 4);
+const PHOTOS_USED_FILE = path.join(STATE, 'photos-used.json');
+const CANDIDATES_FILE = path.join(ROOT, 'photos/candidates.json');
+const SHEETS_DIR = path.join(OUT, 'candidates');
+const PREVIEW_FACTOR = 3; // candidates per missing photo, so the review can keep the best ones
+const SHEET_SIZE = 30;
+
+const args = parseArgs();
+const PER_THEME = Number(args['per-theme'] ?? 4);
+const MODE = args.preview ? 'preview' : args.keep ? 'keep' : args.reject ? 'reject' : 'fetch';
+const ids = (value) => (typeof value === 'string' ? value.split(',').map((s) => s.trim()).filter(Boolean) : []);
+const SCORE = args.score === undefined ? undefined : Number(args.score);
+if (SCORE !== undefined && !(Number.isInteger(SCORE) && SCORE >= 1 && SCORE <= 5)) {
+  console.error('--score must be a whole number from 1 to 5.');
+  process.exit(1);
+}
+const THEME = args.theme;
+if (THEME !== undefined && !THEMES.includes(THEME)) {
+  console.error(`--theme must be one of: ${THEMES.join(', ')}.`);
+  process.exit(1);
+}
 
 // Displayed luxury first, anchored in snow, Alps and chalets where the query allows; then the calmer originals.
 const BASE_QUERIES = {
@@ -49,12 +77,34 @@ const BASE_QUERIES = {
     'elegant woman fur coat snow', 'woman evening dress chalet', 'woman luxury ski outfit',
   ],
 };
-const QUERIES = {
-  ...BASE_QUERIES,
-  ambition: [...BASE_QUERIES.mountain, ...BASE_QUERIES.cars, ...BASE_QUERIES.watches],
-  discipline: [...BASE_QUERIES.watches, ...BASE_QUERIES.mountain, ...BASE_QUERIES.cars],
+// Luxury upgrade of batch 2026-10-21. Queries never searched before are tried first.
+// The last ones for cars, golf and ski are broader fallbacks: in portrait, "rolls royce snow",
+// "bentley mountain", "aston martin alps" and "golf course alps luxury" return almost nothing,
+// and "snow polo" returns VW Polos and Christmas decorations.
+const LUXURY_QUERIES = {
+  cars: [
+    'rolls royce snow', 'bentley mountain', 'aston martin alps', 'range rover snow chalet', 'porsche night snow', 'lamborghini night',
+    'rolls royce', 'bentley', 'aston martin', 'mercedes maybach',
+  ],
+  mountain: ['private jet snow', 'private jet tarmac', 'helicopter alps luxury', 'gstaad', 'st moritz', 'zermatt luxury', 'verbier'],
+  chalets: ['luxury chalet interior', 'chalet fireplace champagne', 'alpine hotel suite', 'luxury hotel lobby alpine', 'chalet terrace hot tub snow'],
+  dining: ['champagne terrace mountains', 'fine dining alpine hotel', 'caviar champagne'],
+  fashion: ['fur coat snow elegant', 'luxury ski outfit', 'cashmere coat winter'],
+  jewels: ['diamond ring luxury dark', 'luxury jewelry macro'],
+  watches: ['rolex', 'patek philippe', 'audemars piguet', 'luxury watch wrist suit'],
+  golf: [
+    'golf course alps luxury', 'golf alps', 'golf course switzerland', 'golf swing mountains', 'golf resort mountains',
+    'golfer silhouette sunset', 'golf course aerial', 'golf course sunrise',
+  ],
+  ski: ['snow polo', 'ski alps luxury sunrise', 'heliskiing', 'skier alps sunset', 'ski touring alps sunrise'],
 };
-// Every other query asks for dark photos.
+const OWN_QUERIES = Object.fromEntries(Object.entries(BASE_QUERIES).map(([t, q]) => [t, [...LUXURY_QUERIES[t], ...q]]));
+const QUERIES = {
+  ...OWN_QUERIES,
+  ambition: [...OWN_QUERIES.mountain, ...OWN_QUERIES.cars, ...OWN_QUERIES.watches],
+  discipline: [...OWN_QUERIES.watches, ...OWN_QUERIES.mountain, ...OWN_QUERIES.cars],
+};
+// Every other original query asks for dark photos.
 const DARK = new Set(Object.values(BASE_QUERIES).flat().filter((_, i) => i % 2 === 0));
 
 
@@ -92,13 +142,18 @@ async function api(pathAndQuery) {
   return res.json();
 }
 const canSpend = (n) => requests + n <= MAX_REQUESTS && remainingQuota >= n + 1;
+const PHOTO_COST = MODE === 'preview' ? 0 : 1; // API requests per photo taken: the download_location ping
 
 const seen = await readJson(SEEN_FILE, {});
 for (const field of ['photos', 'queryCursor', 'queryPage', 'queryLeft', 'queryDone']) seen[field] ??= {};
+// Photos found by --preview and waiting for review: { id: { theme, query, found_at, approved?, score?, photo } }.
+const candidates = await readJson(CANDIDATES_FILE, {});
 await mkdir(PHOTOS_UNSPLASH, { recursive: true });
-const files = await readdir(PHOTOS_UNSPLASH);
-const onDisk = (theme) => files.filter((f) => f.startsWith(`${theme}_`) && f.endsWith('.jpg')).length;
-const need = Object.fromEntries(THEMES.map((t) => [t, Math.max(0, PER_THEME - onDisk(t))]));
+const photosUsed = await readJson(PHOTOS_USED_FILE, {});
+const unusedCounts = async () =>
+  Object.fromEntries(await Promise.all(THEMES.map(async (t) => [t, (await listPhotos(t)).filter((p) => !photosUsed[p.key]).length])));
+const unusedBefore = await unusedCounts();
+const need = Object.fromEntries(THEMES.map((t) => [t, Math.max(0, PER_THEME - unusedBefore[t])]));
 const got = Object.fromEntries(THEMES.map((t) => [t, 0]));
 
 // Search results are pooled by query, so one search can serve mountain, ambition and discipline.
@@ -112,7 +167,7 @@ function takeFromPools(theme) {
     const pool = pools.get(query);
     while (pool?.length) {
       const photo = pool.shift();
-      if (!takenThisRun.has(photo.id) && !seen.photos[photo.id]) return { photo, query };
+      if (!takenThisRun.has(photo.id) && !seen.photos[photo.id] && !candidates[photo.id]) return { photo, query };
     }
   }
   return null;
@@ -143,19 +198,24 @@ async function searchPage(query, black) {
   return usable;
 }
 
+const searchedBefore = (query) => seen.queryPage[query] !== undefined || seen.queryPage[`${query}|black`] !== undefined;
 async function search(theme) {
-  const cursor = seen.queryCursor[theme] ?? 0;
-  const query = QUERIES[theme][cursor % QUERIES[theme].length];
-  if (pools.has(query)) { seen.queryCursor[theme] = cursor + 1; return; } // already searched this run
+  // A query added to the lists is searched before the rotation resumes.
+  let query = QUERIES[theme].find((q) => !searchedBefore(q) && !pools.has(q));
+  if (!query) {
+    const cursor = seen.queryCursor[theme] ?? 0;
+    query = QUERIES[theme][cursor % QUERIES[theme].length];
+    seen.queryCursor[theme] = cursor + 1;
+    if (pools.has(query)) return; // already searched this run
+  }
   let usable = DARK.has(query) ? await searchPage(query, true) : null;
   // A black-only search can come back empty or be used up; try the same query in any colour.
   // When the black search made no request, the caller's budget check already covers this one.
-  if (!usable?.length && (usable === null || canSpend(2))) usable = await searchPage(query, false);
-  seen.queryCursor[theme] = cursor + 1;
+  if (!usable?.length && (usable === null || canSpend(1 + PHOTO_COST))) usable = await searchPage(query, false);
   pools.set(query, usable ?? []);
 }
 
-async function download(theme, photo, query) {
+async function download(theme, photo, query, score) {
   const base = `${theme}_${photo.id}`;
   const jpg = path.join(PHOTOS_UNSPLASH, `${base}.jpg`);
   const res = await throttled(`${photo.urls.raw}&w=1080&h=1350&fit=crop&crop=entropy&q=85&fm=jpg`);
@@ -181,6 +241,7 @@ async function download(theme, photo, query) {
     width: photo.width,
     height: photo.height,
     color: photo.color,
+    ...(score !== undefined ? { score } : {}),
     downloaded_at: new Date().toISOString(),
   };
   await writeFile(path.join(PHOTOS_UNSPLASH, `${base}.json`), JSON.stringify(meta, null, 2) + '\n');
@@ -190,9 +251,10 @@ async function download(theme, photo, query) {
   need[theme]--;
 }
 
-console.log(`Fetching up to ${PER_THEME} photos per theme (budget ${MAX_REQUESTS} API requests).`);
 let stopReason = null;
-try {
+
+async function fetchPhotos() {
+  console.log(`Fetching until each theme has ${PER_THEME} unused photos (budget ${MAX_REQUESTS} API requests).`);
   // Round-robin across themes so a short budget still spreads photos evenly.
   while (THEMES.some((t) => need[t] > 0) && !stopReason) {
     let progressed = false;
@@ -217,6 +279,79 @@ try {
     }
     if (!progressed && !stopReason) break;
   }
+}
+
+// Searches only: every usable result of a page becomes a candidate, until each theme has
+// PREVIEW_FACTOR candidates per missing photo. Nothing is downloaded.
+async function preview() {
+  const pending = (t) => Object.values(candidates).filter((c) => c.theme === t && !c.approved).length;
+  const want = Object.fromEntries(THEMES.map((t) => [t, need[t] * PREVIEW_FACTOR - pending(t)]));
+  console.log(`Searching candidates for ${PER_THEME} unused photos per theme (budget ${MAX_REQUESTS} API requests).`);
+  while (!stopReason && THEMES.some((t) => want[t] > 0)) {
+    for (const theme of THEMES) {
+      if (want[theme] <= 0) continue;
+      if (searchedThisRun[theme] >= QUERIES[theme].length) { want[theme] = 0; continue; }
+      if (!canSpend(1)) { stopReason = 'request budget reached'; break; }
+      searchedThisRun[theme]++;
+      await search(theme);
+      for (let pick; (pick = takeFromPools(theme)); want[theme]--) {
+        candidates[pick.photo.id] = { theme, query: pick.query, found_at: new Date().toISOString(), photo: pick.photo };
+        takenThisRun.add(pick.photo.id);
+        got[theme]++;
+      }
+    }
+  }
+}
+
+// Approves the given candidates, then downloads every approved candidate the budget allows.
+async function keep() {
+  const list = ids(args.keep);
+  const missing = list.filter((id) => !candidates[id]);
+  if (missing.length) throw new Error(`Not in photos/candidates.json: ${missing.join(', ')}`);
+  for (const id of list)
+    Object.assign(candidates[id], { approved: true }, SCORE !== undefined ? { score: SCORE } : {}, THEME ? { theme: THEME } : {});
+  for (const [id, c] of Object.entries(candidates)) {
+    if (!c.approved) continue;
+    if (!canSpend(1)) { stopReason = 'request budget reached'; break; }
+    await download(c.theme, c.photo, c.query, c.score);
+    delete candidates[id];
+  }
+}
+
+function reject() {
+  const list = ids(args.reject);
+  const missing = list.filter((id) => !candidates[id]);
+  if (missing.length) throw new Error(`Not in photos/candidates.json: ${missing.join(', ')}`);
+  for (const id of list) {
+    const { theme, photo } = candidates[id];
+    // Recorded as seen, so a later search never offers it again.
+    seen.photos[id] = { theme, photographer: photo.user.name, username: photo.user.username, rejected_at: new Date().toISOString() };
+    delete candidates[id];
+  }
+}
+
+// One sheet per theme (split by SHEET_SIZE), captioned "number · id", listed the same way on the console.
+async function writeReviewSheets() {
+  await rm(SHEETS_DIR, { recursive: true, force: true });
+  await mkdir(SHEETS_DIR, { recursive: true });
+  for (const theme of THEMES) {
+    const list = Object.entries(candidates).filter(([, c]) => c.theme === theme && !c.approved);
+    for (let i = 0; i < list.length; i += SHEET_SIZE) {
+      const part = list.slice(i, i + SHEET_SIZE).map(([id, c], j) => {
+        console.log(`  ${theme} ${String(i + j + 1).padStart(2)}  ${id}  "${c.query}"`);
+        return { src: `${c.photo.urls.raw}&w=440&h=550&fit=crop&crop=entropy&q=70&fm=jpg`, caption: `${i + j + 1} · ${id}` };
+      });
+      const name = list.length > SHEET_SIZE ? `${theme}-${i / SHEET_SIZE + 1}.png` : `${theme}.png`;
+      await makeContactSheet(part, path.join(SHEETS_DIR, name), { columns: 6, cell: 220, title: `${theme} candidates`, unit: 'photos' });
+    }
+  }
+}
+
+try {
+  if (MODE === 'preview') await preview();
+  else if (MODE === 'keep') await keep();
+  else if (MODE === 'reject') reject();
+  else await fetchPhotos();
 } catch (err) {
   stopReason =
     err.status === 401 ? 'Unsplash rejected UNSPLASH_ACCESS_KEY (401). Check the Access Key in .env'
@@ -224,14 +359,31 @@ try {
     : err.message;
 } finally {
   // Pages that still hold unused photos are asked for again next run instead of skipping to the next page.
-  for (const [query, pool] of pools) if (pool.some((p) => !seen.photos[p.id])) seen.queryLeft[poolKeys.get(query)] = true;
+  for (const [query, pool] of pools) if (pool.some((p) => !seen.photos[p.id] && !candidates[p.id])) seen.queryLeft[poolKeys.get(query)] = true;
   await writeJson(SEEN_FILE, seen);
+  await writeJson(CANDIDATES_FILE, candidates);
 }
 
 const total = Object.values(got).reduce((a, b) => a + b, 0);
-console.log(`\nDownloaded ${total} photo(s) using ${requests} API request(s).`);
-console.log(THEMES.map((t) => `  ${t}: +${got[t]} (now ${onDisk(t) + got[t]} on disk)`).join('\n'));
-const short = THEMES.filter((t) => onDisk(t) + got[t] < PER_THEME);
+const unused = await unusedCounts();
+const pendingFor = (t) => Object.values(candidates).filter((c) => c.theme === t);
+if (MODE !== 'fetch') await writeReviewSheets();
+console.log(
+  MODE === 'preview' ? `\nFound ${total} candidate(s) using ${requests} API request(s). Review sheets: out/candidates/`
+  : MODE === 'reject' ? '\nRejected candidates are recorded in state/unsplash-seen.json.'
+  : `\nDownloaded ${total} photo(s) using ${requests} API request(s).`
+);
+console.log(
+  THEMES.map((t) => {
+    const waiting = pendingFor(t);
+    const approved = waiting.filter((c) => c.approved).length;
+    return `  ${t}: ${unused[t]} unused` +
+      (approved ? `, ${approved} approved still to download` : '') +
+      (waiting.length - approved ? `, ${waiting.length - approved} candidate(s) to review` : '');
+  }).join('\n')
+);
+const short = THEMES.filter((t) => unused[t] < PER_THEME);
 if (stopReason) console.log(`Stopped: ${stopReason}.`);
-if (short.length) console.log(`Still short of ${PER_THEME}: ${short.join(', ')}. Run npm run fetch again in an hour (demo limit is 50 requests/hour).`);
+if (short.length && MODE !== 'reject')
+  console.log(`Still short of ${PER_THEME} unused: ${short.join(', ')}. Run again in an hour if the budget ran out (demo limit is 50 requests/hour).`);
 if (stopReason && !['request budget reached', 'Unsplash rate limit reached'].includes(stopReason)) process.exit(1);

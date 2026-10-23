@@ -38,7 +38,7 @@ Thèmes : `ambition`, `mountain`, `discipline`, `cars`, `watches`, `chalets`, `s
 
 | Commande | Rôle |
 | --- | --- |
-| `npm run fetch` | Télécharge des photos Unsplash, jusqu'à 4 par thème (`-- --per-theme 6` pour plus). |
+| `npm run fetch` | Télécharge des photos Unsplash jusqu'à 4 photos inutilisées par thème (`-- --per-theme 6` pour plus). Avec `--preview`, montre d'abord les candidates à trier. |
 | `npm run check` | Vérifie la banque de citations (longueur, mots interdits, doublons…). |
 | `npm run build` | Construit un lot de 30 posts nommé à la date du jour. |
 | `npm run sheet -- --batch 2026-10-21` | Régénère la planche contact d'un lot. |
@@ -50,6 +50,22 @@ Thèmes : `ambition`, `mountain`, `discipline`, `cars`, `watches`, `chalets`, `s
 - Chaque photo téléchargée coûte une requête de suivi, exigée par Unsplash.
 - Les photos déjà vues ne sont jamais retéléchargées (`state/unsplash-seen.json`).
 - Pour écarter une photo, supprime son `.jpg` et son `.json` dans `photos/unsplash/`. Elle ne reviendra pas, et le prochain `fetch` la remplacera.
+- Les requêtes jamais essayées passent en premier : une requête ajoutée dans `src/fetch-unsplash.mjs` sert dès le passage suivant.
+
+#### Trier avant de télécharger
+
+```sh
+npm run fetch -- --preview --per-theme 5            # cherche seulement : planches dans out/candidates/<thème>.png
+npm run fetch -- --keep id1,id2 --score 5           # garde ces photos (score 1 à 5) et les télécharge
+npm run fetch -- --keep id3 --score 4 --theme cars  # garde une photo sous un autre thème
+npm run fetch -- --reject id4,id5                   # écarte ces photos pour de bon
+npm run fetch -- --keep                             # télécharge les photos gardées que le quota avait laissées en attente
+```
+
+- `--preview` ne télécharge rien : les planches affichent les photos depuis le site d'Unsplash, ce qui ne coûte aucune requête. Seules les photos gardées coûtent une requête chacune.
+- Chaque vignette porte un numéro et un identifiant, repris dans la console. Les candidates en attente sont dans `photos/candidates.json`.
+- Le score sert d'ordre de passage : `build` et `--redo` prennent d'abord tes photos à toi, puis les photos Unsplash du meilleur score au plus bas.
+- Si le quota horaire tombe en cours de route, les photos gardées restent en attente : relance `npm run fetch -- --keep` une heure plus tard.
 - Les photos évoquant fêtes, vie nocturne, feux d'artifice ou deuil sont filtrées. Les photos de personnes vues de dos, de profil ou en silhouette passent en priorité, et les poses suggestives sont écartées.
 
 ### `build`
@@ -59,12 +75,13 @@ npm run build                                       # 30 posts, lot du jour
 npm run build -- --count 20 --batch 2026-11-02      # autre taille, autre nom
 npm run build -- --dry-run                          # affiche le plan, ne fabrique rien
 npm run build -- --batch 2026-10-21 --redo 03,07    # nouvelle photo du même thème pour ces numéros
+npm run build -- --batch 2026-10-21 --redo 03,07 --dry-run   # montre les photos qui seraient prises
 ```
 
 - **Choix des citations.** Les citations déjà utilisées sont exclues (`state/used.json`) et les thèmes sont équilibrés.
 - **Saisons.** Les citations d'hiver sortent de novembre à mars, celles d'été de mai à septembre, les autres toute l'année.
 - **Photos.** Chaque photo sert une seule fois, tous lots confondus (`state/photos-used.json`). Si un thème n'a plus de photo, le lot emprunte des photos de montagne.
-- **`--redo`.** Change la photo des numéros indiqués et garde la même citation, sans toucher aux autres posts. La photo remplacée ne revient pas.
+- **`--redo`.** Change la photo des numéros indiqués et garde la même citation, sans toucher aux autres posts. La photo remplacée ne revient pas. La nouvelle photo est la meilleure photo inutilisée du thème (score de `fetch --keep`).
 
 Un lot produit, dans `out/<lot>/` (local, non versionné) :
 
@@ -107,7 +124,7 @@ src/          scripts (fetch, build, render, sheet, publish, check-quotes, fonts
 src/template.html   gabarit du post (1080 × 1350)
 quotes/       200 citations, 40 légendes et hashtags
 assets/fonts/ polices hébergées dans le dépôt
-photos/       own/ et unsplash/ (non versionnés)
+photos/       own/, unsplash/ et candidates.json (non versionnés)
 state/        citations et photos déjà utilisées, photos Unsplash vues
 out/          lots générés (non versionnés)
 docs/         galerie GitHub Pages et lots publiés

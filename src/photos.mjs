@@ -14,7 +14,8 @@ async function listDir(dir) {
   }
 }
 
-// Returns [{ key, file, source: 'own' | 'unsplash', meta }] for one theme, own photos first.
+// Returns [{ key, file, source: 'own' | 'unsplash', meta }] for one theme, own photos first,
+// then Unsplash photos by review score (fetch --keep --score), highest first.
 export async function listPhotos(theme) {
   const own = (await listDir(PHOTOS_OWN))
     .filter((f) => f.startsWith(`${theme}_`))
@@ -25,5 +26,6 @@ export async function listPhotos(theme) {
     if (!meta) continue; // without metadata there is no credit line, so the photo is not usable
     unsplash.push({ key: `unsplash/${f}`, file: path.join(PHOTOS_UNSPLASH, f), source: 'unsplash', meta });
   }
+  unsplash.sort((a, b) => (b.meta.score ?? 0) - (a.meta.score ?? 0)); // stable: file order within a score
   return [...own, ...unsplash];
 }

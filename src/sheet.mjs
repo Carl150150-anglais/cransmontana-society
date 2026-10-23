@@ -1,4 +1,5 @@
 // Contact sheet: a 3-column grid of rendered posts with their file names, rendered from HTML.
+// Also used for the Unsplash candidate review sheets (remote images, smaller cells).
 // CLI: npm run sheet -- --batch <name>     (or --dir <folder>)
 import { readdir, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
@@ -8,10 +9,12 @@ import { OUT, FONTS_CSS, parseArgs } from './paths.mjs';
 
 const escapeHtml = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
-export async function makeContactSheet(files, outPath, { columns = 3, title = '' } = {}) {
-  const width = 40 * 2 + columns * 340 + (columns - 1) * 24;
+// files: local paths, or { src, caption } items.
+export async function makeContactSheet(files, outPath, { columns = 3, title = '', cell = 340, unit = 'posts' } = {}) {
+  const width = 40 * 2 + columns * cell + (columns - 1) * 24;
   const cells = files
-    .map((f) => `<figure><img src="${pathToFileURL(f).href}"><figcaption>${escapeHtml(path.basename(f))}</figcaption></figure>`)
+    .map((f) => (typeof f === 'string' ? { src: pathToFileURL(f).href, caption: path.basename(f) } : f))
+    .map(({ src, caption }) => `<figure><img src="${escapeHtml(src)}"><figcaption>${escapeHtml(caption)}</figcaption></figure>`)
     .join('\n');
   const html = `<!doctype html><html><head><meta charset="utf-8">
 <link rel="stylesheet" href="${pathToFileURL(FONTS_CSS).href}">
@@ -19,11 +22,11 @@ export async function makeContactSheet(files, outPath, { columns = 3, title = ''
   * { margin: 0; box-sizing: border-box; }
   body { background: #0d0d0d; color: #F2EDE3; font-family: 'Jost', sans-serif; padding: 40px; width: ${width}px; }
   h1 { font-weight: 400; font-size: 18px; letter-spacing: 3px; opacity: .7; margin-bottom: 28px; }
-  .grid { display: grid; grid-template-columns: repeat(${columns}, 340px); gap: 28px 24px; }
-  img { width: 340px; height: 425px; display: block; object-fit: cover; }
+  .grid { display: grid; grid-template-columns: repeat(${columns}, ${cell}px); gap: 28px 24px; }
+  img { width: ${cell}px; height: ${cell * 1.25}px; display: block; object-fit: cover; }
   figcaption { font-size: 14px; opacity: .7; padding-top: 8px; word-break: break-all; }
 </style></head>
-<body><h1>${escapeHtml(title)} · ${files.length} posts</h1><div class="grid">${cells}</div></body></html>`;
+<body><h1>${escapeHtml(title)} · ${files.length} ${unit}</h1><div class="grid">${cells}</div></body></html>`;
 
   // The page must be a file:// page to load the local images; keep it next to the output.
   const htmlPath = path.join(path.dirname(outPath), '.contact-sheet.html');

@@ -5,6 +5,7 @@
 //   npm run build -- --batch 2026-10-21 --redo 03,07   new photo of the same theme for those numbers only
 //   npm run build -- --batch 2026-10-21 --relink       rewrite public_url with the current GitHub Pages base
 //   npm run build -- --dry-run                         print the plan only (nothing rendered or recorded)
+//                                                      (also with --redo: prints the replacement photos)
 import { existsSync } from 'node:fs';
 import { mkdir, copyFile, writeFile, rm } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
@@ -223,6 +224,12 @@ async function redo(list) {
       throw new Error(`No unused ${post.theme} photo left for ${post.file}. Run npm run fetch or add photos/own/${post.theme}_*.jpg.`);
     taken.add(photo.key);
     jobs.push({ post, photo });
+  }
+  if (args['dry-run']) {
+    for (const { post, photo } of jobs)
+      console.log(`  ${post.file}  ${post.photo} -> ${photo.key}${photo.meta?.score ? `  (score ${photo.meta.score})` : ''}`);
+    console.log('Plan only, nothing written.');
+    return;
   }
 
   const renderer = await createRenderer();
